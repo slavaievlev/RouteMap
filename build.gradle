@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '2.5.0'
+        swaggerVersion = '3.0.0'
     }
 
     repositories {
@@ -35,7 +36,11 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok"
 
     implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+
+    implementation "io.springfox:springfox-swagger2:$swaggerVersion"
+    implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"
 
     compileOnly "org.projectlombok:lombok"
 
