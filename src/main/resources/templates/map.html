@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
+    <!--js-->
+    <script src="js/map_view.js"></script>
+
+    <!--Leaflet-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <style>#map {position: absolute; top: 100px; bottom: 0; left: 0; right: 0}</style>
 
+    <!--MapTiler-->
     <script src="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.js"></script>
     <link href="https://cdn.maptiler.com/maptiler-geocoder/v1.1.0/maptiler-geocoder.css" rel="stylesheet" />
 </head>
@@ -34,10 +39,25 @@
                     input: 'search',
                     key: 'VGON8SmqtCfuGbI7Fmhi'
                 });
-                geocoder.on('select', function(item) {
+                geocoder.on('select', async function (item) {
+                    const x = item.center[1];
+                    const y = item.center[0];
+
                     console.log('Selected', item);
-                    var marker = L.marker([item.center[1], item.center[0]]).addTo(map);
-                    map.setView([item.center[1], item.center[0]], 15);
+                    var marker = L.marker([x, y]).addTo(map);
+                    map.setView([x, y], 15);
+
+                    const xy = y + "," + x;
+
+                    let geojsonFeature;
+                    let geojsonFeatureResult = await fetch("https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf624811ae5eae5d534ae6b3ea655ee236e507&start=" + xy + "&end=" + "48.298334,54.303602");
+                    if (geojsonFeatureResult.ok) {
+                        geojsonFeature = await geojsonFeatureResult.json();
+                        console.log(geojsonFeature);
+                        geojsonFeature = geojsonFeature["features"][0];
+                        console.log(geojsonFeature);
+                    }
+                    L.geoJSON(geojsonFeature).addTo(map);
                 });
             </script>
         </div>
